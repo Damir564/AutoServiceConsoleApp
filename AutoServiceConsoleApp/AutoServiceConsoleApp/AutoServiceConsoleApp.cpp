@@ -32,24 +32,24 @@ int main()
     }
 
 
-    int currentCommand;
+    int currentCommand, parameter;
     bool commandState = true;
     do
     {
-        cout << "Введите Команду:" << endl;
-        cin >> currentCommand;
-        switch (currentCommand)
-        {
-        case CHANGELOGO:
-            commandState = changeLogo(0);
-            break;
-        default:
-            break;
-        }
         if (!commandState)
         {
             system("pause");
             return -1;
+        }
+        cout << "Введите Команду:" << endl;
+        cin >> currentCommand >> parameter;
+        switch (currentCommand)
+        {
+        case CHANGELOGO:
+            commandState = changeLogo(parameter);
+            break;
+        default:
+            break;
         }
     } while (currentCommand != EXIT);
 
