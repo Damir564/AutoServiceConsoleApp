@@ -12,7 +12,7 @@ enum COMMANDS {
     PARTS,
     PRICELIST,
     CHANGELOGO = 9,
-    EXIT = 10
+    EXIT = 0
 };
 
 int main()
@@ -32,7 +32,7 @@ int main()
     }
 
 
-    int currentCommand, parameter;
+    int currentCommand = 0;
     bool commandState = true;
     do
     {
@@ -42,11 +42,11 @@ int main()
             return -1;
         }
         cout << "Введите Команду:" << endl;
-        cin >> currentCommand >> parameter;
+        userInputHandler<>(currentCommand);
         switch (currentCommand)
         {
         case CHANGELOGO:
-            commandState = changeLogo(parameter);
+            commandState = changeLogo();
             break;
         default:
             break;
@@ -93,12 +93,22 @@ bool drawLogo(int numberOfile)
     return true;
 }
 
-bool changeLogo(int numberOfFile)
+bool changeLogo()
 {
+    int currentParam;
+    cout  << "\tВыберите логотип:\n\t\t1 - Гайка\n\t\t2 - Машина\t0 - Вернуться назад" << endl;
+    do
+    {
+        cout << "Параметр: ";
+        cin >> currentParam;
+        if (!currentParam)
+            return true;
+    } while (currentParam != 1 && currentParam != 2);
+    currentParam -= 1;
     string lines[100];
     string param;
     int value;
-    int k, i;
+    int k = -1, i;
     fstream settingsFile("..\\Debug\\settings.txt");
     if (!settingsFile.is_open())
     {
@@ -112,7 +122,7 @@ bool changeLogo(int numberOfFile)
     }
     
     lines[k] = lines[k].erase(lines[k].find(' ') + 1, lines[k].length() - lines[k].find(' ') - 1);
-    lines[k] = lines[k].insert(lines[k].find(' ') + 1, to_string(numberOfFile));
+    lines[k] = lines[k].insert(lines[k].find(' ') + 1, to_string(currentParam));
     settingsFile.clear();
     settingsFile.seekp(0);
     for (int j = 0; j != i; ++j)
@@ -122,6 +132,13 @@ bool changeLogo(int numberOfFile)
 
     settingsFile.close();
     return true;
+}
+
+template <typename T>
+void userInputHandler(T & arg)
+{
+    cout << "Ввод >> ";
+    cin >> arg;
 }
 
 void clearScreen()
