@@ -11,7 +11,9 @@ enum COMMANDS {
     EMPLOYEES,
     PARTS,
     PRICELIST,
-    CHANGELOGO = 9,
+    CHANGELOGO = 7,
+    HELP = 8,
+    RESTART = 9,
     EXIT = 0
 };
 
@@ -47,6 +49,9 @@ int main()
         {
         case CHANGELOGO:
             commandState = changeLogo();
+            break;
+        case RESTART:
+            commandState = clearScreen();
             break;
         default:
             break;
@@ -96,15 +101,18 @@ bool drawLogo(int numberOfile)
 bool changeLogo()
 {
     int currentParam;
-    cout  << "\tВыберите логотип:\n\t\t1 - Гайка\n\t\t2 - Машина\t0 - Вернуться назад" << endl;
+    cout  << "Выберите логотип:\n\t1 - Гайка\n\t2 - Машина\n0 - Вернуться назад" << endl;
     do
     {
-        cout << "Параметр: ";
-        cin >> currentParam;
+        userInputHandler<>(currentParam);
         if (!currentParam)
+        {
+            onExitCommand();
             return true;
+        }
     } while (currentParam != 1 && currentParam != 2);
     currentParam -= 1;
+    settings::logoNumber = currentParam;
     string lines[100];
     string param;
     int value;
@@ -141,8 +149,17 @@ void userInputHandler(T & arg)
     cin >> arg;
 }
 
-void clearScreen()
+void onExitCommand()
 {
-    cout << string(100, '\n');
+    cout << "<Завершнение команды>" << endl;
+}
+
+bool clearScreen()
+{
+    system("cls");
+    drawLogo(settings::logoNumber);
+    
+    return true;
+    //cout << string(100, '\n');
 }
 
