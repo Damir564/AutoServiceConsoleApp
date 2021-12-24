@@ -7,7 +7,7 @@
 
 using namespace std;
 
-using vectorPair_t = vector<pair<string, int>>;
+using vectorPair_t = vector<pair<string, long long>>;
 using map_t = map<string, int>;
 
 #include "Header.h"
@@ -43,6 +43,12 @@ int main()
         system("pause");
         return -1;
     }
+
+    if (!getEmployees(progInfo.employeesList))
+    {
+        system("pause");
+        return -1;
+    }
     
     if (!drawLogo(progInfo.settingsMap))
     {
@@ -65,6 +71,9 @@ int main()
         userInputHandler<>(currentCommand);
         switch (currentCommand)
         {
+        case EMPLOYEES:
+            commandState = printEmployees(progInfo.employeesList);
+            break;
         case HELP:
             commandState = printHelp();
             break;
@@ -103,6 +112,7 @@ bool getSettings(map_t& settingsMap)
     ifstream settingsFile("..\\Debug\\settings.txt");
     if (!settingsFile.is_open())
     {
+        cout << "Файл Настроек не найден" << endl;
         return false;
     }
     while (settingsFile >> param >> value)
@@ -110,6 +120,58 @@ bool getSettings(map_t& settingsMap)
         settingsMap[param] = value;
     }
     settingsFile.close();
+    return true;
+}
+
+bool printEmployees(vectorPair_t& employeesList)
+{
+    for (vectorPair_t::iterator i = employeesList.begin(); i != employeesList.end(); ++i)
+    {
+        cout << i->first << ". Контакты: +" << i->second << endl;
+    }
+
+    return true;
+}
+
+bool getEmployees(vectorPair_t& employeesList)
+{
+    string name = "";
+    long long number = 0;
+    ifstream employeeFile("..\\Debug\\employees.dat", ios_base::binary);
+    if (!employeeFile.is_open())
+    {
+        cout << "Файл Сотрудников не найден" << endl;
+        return false;
+    }
+    char c = '>';
+    bool readNumber = false;
+
+    while (employeeFile)
+    {
+        employeeFile.read(&c, 1);
+        if (!readNumber && c != '+' && c != '\n')
+        {
+            name = name + c;
+        }
+        else if (c == '+')
+        {
+            readNumber = true;
+        }
+        else if (readNumber && c != ' ' && c != '\r')
+        {
+            number = number * 10 + (c - '0');
+        }
+        else if (readNumber && (c == ' ' || c == '\r'))
+        {
+            readNumber = false;
+            name.erase(name.end());
+            employeesList.push_back({ name, number });
+
+            name = "";
+            number = 0;
+        }
+    }
+    employeeFile.close();
     return true;
 }
 
@@ -144,26 +206,11 @@ bool changeLogo(map_t& settingsMap)
     } while (currentParam != 1 && currentParam != 2);
     currentParam -= 1;
     settingsMap["logoNumber"] = currentParam;
-    //string lines[100];
-    //string param;
-    //int value;
-    // int k = -1, i;
-    fstream settingsFile("..\\Debug\\settings.txt");
+    ofstream settingsFile("..\\Debug\\settings.txt");
     if (!settingsFile.is_open())
     {
         return false;
     }
-    //for (i = 0; settingsFile >> param >> value; ++i)
-    //{
-    //    if (param == "logoNumber")
-    //        k = i;
-    //    lines[i] = param + " " + to_string(value);
-    //}
-    //
-    //lines[k] = lines[k].erase(lines[k].find(' ') + 1, lines[k].length() - lines[k].find(' ') - 1);
-    //lines[k] = lines[k].insert(lines[k].find(' ') + 1, to_string(currentParam));
-    //settingsFile.clear();
-    //settingsFile.seekp(0);
     for (map_t::iterator i = settingsMap.begin(); i != settingsMap.end(); ++i)
     {
         settingsFile << i->first << " " << i->second <<  endl;
@@ -196,8 +243,8 @@ bool clearScreen()
 
 /*
 * +Команда printHelp()
-* Сделать возможность чтения сотрудников из employee.dat/bool getEmployeeList(string & arr[]). Формат: ФИО номер_телефона. 
-* Вывод всех сотрудников на экран/void printEmployeeList(string & arr[]).
+* +Сделать возможность чтения сотрудников из employee.dat/bool getEmployees(string & arr[]). Формат: ФИО номер_телефона. 
+* +Вывод всех сотрудников на экран/void printEmployees(string & arr[]).
 * Возможность добавлять сотрудников/ bool addEmployee(string & arr[]). Параметры - ФИО, номер.
 * Возможность убирать сотрудников/ bool removeEmployee(string & arr[]). Параметры - ФИО, номер.
 * Возможность чтения истории обслуживания клиентов. bool getHistory(string & arr[]). Формат: дд.мм.гг НОМЕРАВТО категория_обслуживания деньги.
