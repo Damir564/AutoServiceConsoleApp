@@ -11,4 +11,3 @@ bool clearScreen();
 
 template <typename T>
 void userInputHandler(T & arg);
-

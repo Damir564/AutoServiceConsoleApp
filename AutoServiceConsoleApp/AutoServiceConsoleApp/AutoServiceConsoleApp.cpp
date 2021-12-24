@@ -3,6 +3,7 @@
 #include <string>
 #include <locale>
 #include <vector>
+#include <Windows.h>
 #include <map>
 
 using namespace std;
@@ -37,6 +38,8 @@ ProgramInfo progInfo;
 int main()
 {
     setlocale(LC_ALL, "RU");
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
 
     if (!getSettings(progInfo.settingsMap))
     {
@@ -108,30 +111,32 @@ bool addEmployee(vectorPair_t& employeesList)
         }
     } while (currentParam < 0);
 
-    string buffer;
-    string name;
-    long long number;
-    int separator;
-    ofstream employeesFile("..\\Debug\\employees.dat", ios_base::binary && ios_base::app);
+    ofstream employeesFile("..\\Debug\\employees.dat", ios_base::app);
     if (!employeesFile.is_open())
     {
         cout << "‘айл —отрудников не найден" << endl;
         return false;
     }
+
+    string buffer;
+    string name;
+    long long number;
+    int separator;
     for (int i = 0; i != currentParam; ++i)
     {
-        // userInputHandler<string>(buffer);
-        cout << endl;
-        getline(cin, buffer);
+        userInputHandler(buffer);
         separator = buffer.rfind(' ');
         name = buffer.substr(0, separator);
-        // cout << name << endl;
-        if (buffer.find('+'))
+        //cout << name << endl;
+        // cout << buffer.find('+') << endl;
+        if (buffer.find('+') != string::npos)
             separator = buffer.find('+');
         number = stoll(buffer.substr(separator + 1, buffer.size() - separator - 1));
         employeesList.push_back({ name, number });
-        // buffer = name + " +" + to_string(number) + "\n";
-        //employeesFile.write(buffer.c_str(), sizeof(char) * buffer.size());
+        buffer = name + " +" + to_string(number) + "\n";
+        //employeesFile.seekp(ios::end);
+        //cout << employeesFile.tellp() << endl;
+        employeesFile.write(buffer.c_str(), sizeof(char) * buffer.size());
     }
     employeesFile.close();
 
@@ -269,8 +274,16 @@ bool changeLogo(map_t& settingsMap)
 template <typename T>
 void userInputHandler(T & arg)
 {
-        cout << "¬вод >> ";
+    cout << "¬вод >> ";
+    if constexpr (is_same_v<T, string>) // ???
+    { 
+        cin.ignore();
+        getline(cin, arg);
+    }
+    else
+    {  
         cin >> arg;
+    }
 }
 
 void onExitCommand()
