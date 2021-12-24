@@ -3,6 +3,7 @@ bool drawLogo(int numberOfFile);
 bool changeLogo();
 bool getSettings(int & arg);
 void onExitCommand();
+bool printHelp();
 bool clearScreen();
 
 template <typename T>

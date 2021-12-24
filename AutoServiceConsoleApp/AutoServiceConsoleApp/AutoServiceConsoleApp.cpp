@@ -8,8 +8,9 @@
 using namespace std;
 
 enum COMMANDS {
-    EMPLOYEES,
-    PARTS,
+    EMPLOYEES = 1,
+    ADDEMPLOYEE = 2,
+    REMOVEEMPLOYEE = 3,
     PRICELIST,
     CHANGELOGO = 7,
     HELP = 8,
@@ -48,6 +49,9 @@ int main()
         userInputHandler<>(currentCommand);
         switch (currentCommand)
         {
+        case HELP:
+            commandState = printHelp();
+            break;
         case CHANGELOGO:
             commandState = changeLogo();
             break;
@@ -61,6 +65,19 @@ int main()
 
     system("pause");
     return 0;
+}
+
+bool printHelp()
+{
+    cout << "Список возможных команд:" << endl;
+    cout << "1.\tВывести список сотрудников" << endl;
+    cout << "2.\tДобавить в список сотрудников" << endl;
+    cout << "3.\tУбрать из списка сотрудников" << endl;
+    cout << "7.\tИзменить логотип программы" << endl;
+    cout << "8.\tВывести список команд" << endl;
+    cout << "9.\tПерезагрузить программу" << endl;
+    cout << "10.\tВыйти из программы" << endl;
+    return true;
 }
 
 bool getSettings(int & arg)
@@ -165,9 +182,11 @@ bool clearScreen()
 }
 
 /*
+* +Команда printHelp()
 * Сделать возможность чтения сотрудников из employee.dat/bool getEmployeeList(string & arr[]). Формат: ФИО номер_телефона. 
 * Вывод всех сотрудников на экран/void printEmployeeList(string & arr[]).
-* Возможность добавлять сотрудников/ bool addEmployeeList(string & arr[]). Параметры - ФИО, номер.
+* Возможность добавлять сотрудников/ bool addEmployee(string & arr[]). Параметры - ФИО, номер.
+* Возможность убирать сотрудников/ bool removeEmployee(string & arr[]). Параметры - ФИО, номер.
 * Возможность чтения истории обслуживания клиентов. bool getHistory(string & arr[]). Формат: дд.мм.гг НОМЕРАВТО категория_обслуживания деньги.
 * Возможность вывода на экран. void printHistory(string & arr[]).
 * Возможность добавлять в историю обслуживания. bool addHistory(string & arr[]). Параметры - номеравто, категория, деньги.
