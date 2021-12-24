@@ -21,7 +21,7 @@ int main()
 {
     setlocale(LC_ALL, "RU");
 
-    if (!getSettings())
+    if (!getSettings(settings::logoNumber))
     {
         system("pause");
         return -1;
@@ -32,6 +32,7 @@ int main()
         system("pause");
         return -1;
     }
+    cout << "Добро пожаловать! Введите команду. Чтобы открыть список команд введите 8" << endl;
 
 
     int currentCommand = 0;
@@ -62,9 +63,9 @@ int main()
     return 0;
 }
 
-bool getSettings()
+bool getSettings(int & arg)
 {
-    settings::logoNumber = 0;
+    arg = 0;
 
     string param;
     int value;
@@ -76,7 +77,7 @@ bool getSettings()
     while (settingsFile >> param >> value)
     {
         if (param == "logoNumber")
-            settings::logoNumber = value;
+            arg = value;
     }
     settingsFile.close();
     return true;
@@ -158,8 +159,18 @@ bool clearScreen()
 {
     system("cls");
     drawLogo(settings::logoNumber);
+    cout << "Добро пожаловать! Введите команду. Чтобы открыть список команд введите 8" << endl;
     
     return true;
-    //cout << string(100, '\n');
 }
+
+/*
+* Сделать возможность чтения сотрудников из employee.dat/bool getEmployeeList(string & arr[]). Формат: ФИО номер_телефона. 
+* Вывод всех сотрудников на экран/void printEmployeeList(string & arr[]).
+* Возможность добавлять сотрудников/ bool addEmployeeList(string & arr[]). Параметры - ФИО, номер.
+* Возможность чтения истории обслуживания клиентов. bool getHistory(string & arr[]). Формат: дд.мм.гг НОМЕРАВТО категория_обслуживания деньги.
+* Возможность вывода на экран. void printHistory(string & arr[]).
+* Возможность добавлять в историю обслуживания. bool addHistory(string & arr[]). Параметры - номеравто, категория, деньги.
+* Возможность смотреть прибыль за период int getIncome(int date1, int date2 = -1). if (date2 == -1)
+*/
 

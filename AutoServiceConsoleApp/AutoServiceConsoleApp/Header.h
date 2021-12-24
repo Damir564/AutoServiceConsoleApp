@@ -1,7 +1,7 @@
 #pragma once
 bool drawLogo(int numberOfFile);
 bool changeLogo();
-bool getSettings();
+bool getSettings(int & arg);
 void onExitCommand();
 bool clearScreen();
 
