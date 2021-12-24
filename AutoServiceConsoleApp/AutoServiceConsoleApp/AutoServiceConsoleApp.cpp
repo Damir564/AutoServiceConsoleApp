@@ -1,11 +1,16 @@
-#include "Header.h"
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <locale>
+#include <vector>
+#include <map>
 
 using namespace std;
+
+using vectorPair_t = vector<pair<string, int>>;
+using map_t = map<string, int>;
+
+#include "Header.h"
 
 enum COMMANDS {
     EMPLOYEES = 1,
@@ -18,22 +23,33 @@ enum COMMANDS {
     EXIT = 0
 };
 
+struct ProgramInfo
+{
+    ProgramInfo(){}
+    ~ProgramInfo(){}
+    map_t settingsMap;
+    vectorPair_t employeesList;
+    vectorPair_t historyList;
+};
+
+ProgramInfo progInfo;
+
 int main()
 {
     setlocale(LC_ALL, "RU");
 
-    if (!getSettings(settings::logoNumber))
+    if (!getSettings(progInfo.settingsMap))
     {
         system("pause");
         return -1;
     }
     
-    if (!drawLogo(settings::logoNumber))
+    if (!drawLogo(progInfo.settingsMap))
     {
         system("pause");
         return -1;
     }
-    cout << "Добро пожаловать! Введите команду. Чтобы открыть список команд введите 8" << endl;
+    cout << "Добро пожаловать! Чтобы увидеть список команд введите 8" << endl;
 
 
     int currentCommand = 0;
@@ -53,7 +69,7 @@ int main()
             commandState = printHelp();
             break;
         case CHANGELOGO:
-            commandState = changeLogo();
+            commandState = changeLogo(progInfo.settingsMap);
             break;
         case RESTART:
             commandState = clearScreen();
@@ -80,10 +96,8 @@ bool printHelp()
     return true;
 }
 
-bool getSettings(int & arg)
+bool getSettings(map_t& settingsMap)
 {
-    arg = 0;
-
     string param;
     int value;
     ifstream settingsFile("..\\Debug\\settings.txt");
@@ -93,17 +107,16 @@ bool getSettings(int & arg)
     }
     while (settingsFile >> param >> value)
     {
-        if (param == "logoNumber")
-            arg = value;
+        settingsMap[param] = value;
     }
     settingsFile.close();
     return true;
 }
 
-bool drawLogo(int numberOfile)
+bool drawLogo(map_t& settingsMap)
 {
     const string PATHS[2] = { "..\\Debug\\logo.txt" , "..\\Debug\\logo2.txt" };
-    ifstream logoFile(PATHS[numberOfile]);
+    ifstream logoFile(PATHS[settingsMap["logoNumber"]]);
     if (!logoFile.is_open())
     {
         cout << "Файл Логотипа не найден" << endl;
@@ -116,7 +129,7 @@ bool drawLogo(int numberOfile)
     return true;
 }
 
-bool changeLogo()
+bool changeLogo(map_t& settingsMap)
 {
     int currentParam;
     cout  << "Выберите логотип:\n\t1 - Гайка\n\t2 - Машина\n0 - Вернуться назад" << endl;
@@ -130,30 +143,30 @@ bool changeLogo()
         }
     } while (currentParam != 1 && currentParam != 2);
     currentParam -= 1;
-    settings::logoNumber = currentParam;
-    string lines[100];
-    string param;
-    int value;
-    int k = -1, i;
+    settingsMap["logoNumber"] = currentParam;
+    //string lines[100];
+    //string param;
+    //int value;
+    // int k = -1, i;
     fstream settingsFile("..\\Debug\\settings.txt");
     if (!settingsFile.is_open())
     {
         return false;
     }
-    for (i = 0; settingsFile >> param >> value; ++i)
+    //for (i = 0; settingsFile >> param >> value; ++i)
+    //{
+    //    if (param == "logoNumber")
+    //        k = i;
+    //    lines[i] = param + " " + to_string(value);
+    //}
+    //
+    //lines[k] = lines[k].erase(lines[k].find(' ') + 1, lines[k].length() - lines[k].find(' ') - 1);
+    //lines[k] = lines[k].insert(lines[k].find(' ') + 1, to_string(currentParam));
+    //settingsFile.clear();
+    //settingsFile.seekp(0);
+    for (map_t::iterator i = settingsMap.begin(); i != settingsMap.end(); ++i)
     {
-        if (param == "logoNumber")
-            k = i;
-        lines[i] = param + " " + to_string(value);
-    }
-    
-    lines[k] = lines[k].erase(lines[k].find(' ') + 1, lines[k].length() - lines[k].find(' ') - 1);
-    lines[k] = lines[k].insert(lines[k].find(' ') + 1, to_string(currentParam));
-    settingsFile.clear();
-    settingsFile.seekp(0);
-    for (int j = 0; j != i; ++j)
-    {
-        settingsFile << lines[j] << endl;
+        settingsFile << i->first << " " << i->second <<  endl;
     }
 
     settingsFile.close();
@@ -175,7 +188,7 @@ void onExitCommand()
 bool clearScreen()
 {
     system("cls");
-    drawLogo(settings::logoNumber);
+    drawLogo(progInfo.settingsMap);
     cout << "Добро пожаловать! Введите команду. Чтобы открыть список команд введите 8" << endl;
     
     return true;

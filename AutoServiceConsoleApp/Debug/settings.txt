@@ -1,3 +1,4 @@
-anotherParam 1
 anotherParam 2
-logoNumber 0
+logoNumber 1
+
+logoNumber 1

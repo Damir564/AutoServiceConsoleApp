@@ -1,15 +1,11 @@
 #pragma once
-bool drawLogo(int numberOfFile);
-bool changeLogo();
-bool getSettings(int & arg);
+bool drawLogo(map_t& settingsMap);
+bool changeLogo(map_t& settingsMap);
 void onExitCommand();
+bool getSettings(map_t& settingsMap);
 bool printHelp();
 bool clearScreen();
 
 template <typename T>
 void userInputHandler(T & arg);
 
-namespace settings
-{
-	int logoNumber;
-}
