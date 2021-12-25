@@ -41,6 +41,11 @@ int main()
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
+    SYSTEMTIME st;
+
+    GetLocalTime(&st);
+    cout << st.wYear << endl;
+
     if (!getSettings(progInfo.settingsMap))
     {
         system("pause");
@@ -245,7 +250,7 @@ bool getEmployees(vectorPair_t& employeesList)
         cout << "Файл Сотрудников не найден" << endl;
         return false;
     }
-    char c = '>';
+    char c;
     bool readNumber = false;
 
     while (employeesFile)
@@ -274,6 +279,48 @@ bool getEmployees(vectorPair_t& employeesList)
         }
     }
     employeesFile.close();
+    return true;
+}
+
+bool getHistory(vectorPair_t& employeesList)
+{
+    string info = "";
+    long long number = 0;
+    ifstream historyFile("..\\Debug\\history.dat", ios_base::binary);
+    if (!historyFile.is_open())
+    {
+        cout << "Файл Истории не найден" << endl;
+        return false;
+    }
+    char c;
+    bool readNumber = false;
+
+    while (historyFile)
+    {
+        historyFile.read(&c, 1);
+        if (!readNumber && c != '+'  && c != '-' && c != '\n')
+        {
+            info = info + c;
+        }
+        else if (c == '+')
+        {
+            readNumber = true;
+        }
+        else if (readNumber && c != ' ' && c != '\r')
+        {
+            number = number * 10 + (c - '0');
+        }
+        else if (readNumber && (c == ' ' || c == '\r'))
+        {
+            readNumber = false;
+            info.pop_back();
+            employeesList.push_back({ info, number });
+
+            name = "";
+            number = 0;
+        }
+    }
+    historyFile.close();
     return true;
 }
 
