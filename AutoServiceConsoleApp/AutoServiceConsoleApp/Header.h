@@ -6,6 +6,7 @@ bool getSettings(map_t& settingsMap);
 bool getEmployees(vectorPair_t& employeesList);
 bool printEmployees(vectorPair_t& employeesList);
 bool addEmployee(vectorPair_t& employeesList);
+bool removeEmployee(vectorPair_t& employeesList);
 bool printHelp();
 bool clearScreen();
 

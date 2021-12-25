@@ -79,6 +79,9 @@ int main()
         case ADDEMPLOYEE:
             commandState = addEmployee(progInfo.employeesList);
             break;
+        case REMOVEEMPLOYEE:
+            commandState = removeEmployee(progInfo.employeesList);
+            break;
         case HELP:
             commandState = printHelp();
             break;
@@ -100,7 +103,7 @@ int main()
 bool addEmployee(vectorPair_t& employeesList)
 {
     int currentParam;
-    cout << "Для того, чтобы добавить нового сотрудника, напишите количество добавляемых сотрудников (0 - вернуться назад)" << endl;
+    cout << "Для того, чтобы добавить новых сотрудникок, введите количество добавляемых сотрудников (0 - вернуться назад)" << endl;
     do
     {
         userInputHandler<>(currentParam);
@@ -111,13 +114,13 @@ bool addEmployee(vectorPair_t& employeesList)
         }
     } while (currentParam < 0);
 
-    ofstream employeesFile("..\\Debug\\employees.dat", ios_base::app);
+    ofstream employeesFile("..\\Debug\\employees.dat", ios_base::binary | ios_base::app);
     if (!employeesFile.is_open())
     {
         cout << "Файл Сотрудников не найден" << endl;
         return false;
     }
-
+    cout << "Введите данные о каждом сотруднике: ФИО номер_телефона" << endl;
     string buffer;
     string name;
     long long number;
@@ -127,15 +130,63 @@ bool addEmployee(vectorPair_t& employeesList)
         userInputHandler(buffer);
         separator = buffer.rfind(' ');
         name = buffer.substr(0, separator);
-        //cout << name << endl;
-        // cout << buffer.find('+') << endl;
         if (buffer.find('+') != string::npos)
             separator = buffer.find('+');
         number = stoll(buffer.substr(separator + 1, buffer.size() - separator - 1));
         employeesList.push_back({ name, number });
         buffer = name + " +" + to_string(number) + "\n";
-        //employeesFile.seekp(ios::end);
-        //cout << employeesFile.tellp() << endl;
+        employeesFile.write(buffer.c_str(), sizeof(char) * buffer.size());
+    }
+    employeesFile.close();
+
+    return true;
+}
+
+bool removeEmployee(vectorPair_t& employeesList)
+{
+    int currentParam;
+    cout << "Для того, чтобы удалить сотрудников из списка, введите количество удаляемых сотрудников (0 - вернуться назад)" << endl;
+    do
+    {
+        userInputHandler<>(currentParam);
+        if (!currentParam)
+        {
+            onExitCommand();
+            return true;
+        }
+    } while (currentParam < 0);
+
+    cout << "Введите ФИО удаляемого сотрудника" << endl;
+    string name;
+    map_t posMap;
+    for (vectorPair_t::iterator i = employeesList.begin(); i != employeesList.end(); ++i)
+    {
+        posMap[i->first] = i - employeesList.begin();
+        cout << i->first << endl;
+    }
+    for (int i = 0; i != currentParam; ++i)
+    {
+        userInputHandler(name);
+        if (posMap.find(name) == posMap.end())
+        {
+            cout << "Данный сотрудник не найден" << endl;
+            return false;
+        }
+        else
+        {
+            employeesList.erase(employeesList.begin() + posMap[name]);
+        }
+    }
+    ofstream employeesFile("..\\Debug\\employees.dat", ios_base::binary);
+    if (!employeesFile.is_open())
+    {
+        cout << "Файл Сотрудников не найден" << endl;
+        return false;
+    }
+    string buffer;
+    for (vectorPair_t::iterator i = employeesList.begin(); i != employeesList.end(); ++i)
+    {
+        buffer = i->first + " +" + to_string(i->second) + "\n";
         employeesFile.write(buffer.c_str(), sizeof(char) * buffer.size());
     }
     employeesFile.close();
@@ -215,7 +266,7 @@ bool getEmployees(vectorPair_t& employeesList)
         else if (readNumber && (c == ' ' || c == '\r'))
         {
             readNumber = false;
-            name.erase(name.end());
+            name.pop_back();
             employeesList.push_back({ name, number });
 
             name = "";
@@ -288,7 +339,7 @@ void userInputHandler(T & arg)
 
 void onExitCommand()
 {
-    cout << "<Завершнение команды>" << endl;
+    cout << "Завершнение команды" << endl;
 }
 
 bool clearScreen()
@@ -304,8 +355,8 @@ bool clearScreen()
 * +Команда printHelp()
 * +Сделать возможность чтения сотрудников из employee.dat/bool getEmployees(string & arr[]). Формат: ФИО номер_телефона. 
 * +Вывод всех сотрудников на экран/void printEmployees(string & arr[]).
-* Возможность добавлять сотрудников/ bool addEmployee(string & arr[]). Параметры - ФИО, номер.
-* Возможность убирать сотрудников/ bool removeEmployee(string & arr[]). Параметры - ФИО, номер.
+* +Возможность добавлять сотрудников/ bool addEmployee(string & arr[]). Параметры - ФИО, номер.
+* +Возможность убирать сотрудников/ bool removeEmployee(string & arr[]). Параметры - ФИО, номер.
 * Возможность чтения истории обслуживания клиентов. bool getHistory(string & arr[]). Формат: дд.мм.гг НОМЕРАВТО категория_обслуживания деньги.
 * Возможность вывода на экран. void printHistory(string & arr[]).
 * Возможность добавлять в историю обслуживания. bool addHistory(string & arr[]). Параметры - номеравто, категория, деньги.
