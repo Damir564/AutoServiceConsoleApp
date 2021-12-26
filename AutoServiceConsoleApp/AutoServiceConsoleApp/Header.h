@@ -4,7 +4,7 @@ bool changeLogo(map_t& settingsMap);
 void onExitCommand();
 bool getSettings(map_t& settingsMap);
 bool printHelp();
-bool clearScreen();
+bool startProgram(ProgramInfo& progInfo);
 
 bool getEmployees(vectorPair_t& employeesList);
 bool printEmployees(vectorPair_t& employeesList);

@@ -11,8 +11,6 @@ using namespace std;
 using map_t = map<string, int>;
 using vectorPair_t = vector<pair<string, long long>>;
 
-#include "Header.h"
-
 enum COMMANDS {
     EXIT,
     EMPLOYEES,
@@ -30,41 +28,32 @@ struct ProgramInfo
 {
     ProgramInfo() : earnings(0){}
     ~ProgramInfo(){}
+    void clear()
+    {
+        earnings = 0;
+        settingsMap.clear();
+        employeesList.clear();
+        historyList.clear();
+    }
     map_t settingsMap;
     vectorPair_t employeesList;
     vectorPair_t historyList;
     long long earnings;
 };
 
-ProgramInfo progInfo;
+#include "Header.h"
 
 int main()
 {
     setlocale(LC_ALL, "RU");
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-
-    if (!getSettings(progInfo.settingsMap))
-    {
-        system("pause");
+    ProgramInfo progInfo;
+    if (!startProgram(progInfo))
+    { 
+        std::system("pause");
         return -1;
     }
-    if (!getEmployees(progInfo.employeesList))
-    {
-        system("pause");
-        return -1;
-    }
-    if (!getHistory(progInfo.historyList, progInfo.earnings))
-    {
-        system("pause");
-        return -1;
-    }
-    if (!drawLogo(progInfo.settingsMap))
-    {
-        system("pause");
-        return -1;
-    }
-    cout << "Добро пожаловать! Чтобы увидеть список команд введите 8" << endl;
 
     int currentCommand = 0;
     bool commandState = true;
@@ -72,11 +61,11 @@ int main()
     {
         if (!commandState)
         {
-            system("pause");
+            std::system("pause");
             return -1;
         }
         cout << "Введите Команду:" << endl;
-        userInputHandler<>(currentCommand);
+        userInputHandler(currentCommand);
         switch (currentCommand)
         {
         case EMPLOYEES:
@@ -104,14 +93,17 @@ int main()
             commandState = changeLogo(progInfo.settingsMap);
             break;
         case RESTART:
-            commandState = clearScreen();
+            commandState = startProgram(progInfo);
+            break;
+        case EXIT:
             break;
         default:
+            cout << "Ошибка ввода команды" << endl;
             break;
         }
     } while (currentCommand != EXIT);
 
-    system("pause");
+    std::system("pause");
     return 0;
 }
 
@@ -135,7 +127,12 @@ bool addEmployee(vectorPair_t& employeesList)
 {
     int currentParam;
     cout << "Для того, чтобы добавить новых сотрудникок, введите количество добавляемых сотрудников (0 - вернуться назад)" << endl;
-    userInputHandler<>(currentParam);
+    userInputHandler(currentParam);
+    if (cin.fail())
+    {
+        cout << "Ошибка ввода! Вы ввели не число." << endl;
+        return false;
+    }
     if (!currentParam)
     {
         onExitCommand();
@@ -176,7 +173,12 @@ bool removeEmployee(vectorPair_t& employeesList)
 {
     int currentParam;
     cout << "Для того, чтобы удалить сотрудников из списка, введите количество удаляемых сотрудников (0 - вернуться назад)" << endl;
-    userInputHandler<>(currentParam);
+    userInputHandler(currentParam);
+    if (cin.fail())
+    {
+        cout << "Ошибка ввода! Вы ввели не число." << endl;
+        return false;
+    }
     if (!currentParam)
     {
         onExitCommand();
@@ -296,23 +298,16 @@ bool addHistory(vectorPair_t& historyList)
 {
     int currentParam;
     cout << "Для того, чтобы добавить запись в историю, введите количество новых записей (0 - вернуться назад)" << endl;
-    userInputHandler<>(currentParam);
-    try
+    userInputHandler(currentParam);
+    if (cin.fail())
     {
-        if (cin.fail())
-        {
-            throw exception("Ошибка ввода! Вы ввели не число.");
-        }
-        else if (!currentParam)
-        {
-            onExitCommand();
-            return true;
-        }
-    }
-    catch (const exception& error)
-    {
-        cout << error.what() << endl;
+        cout << "Ошибка ввода! Вы ввели не число." << endl;
         return false;
+    }
+    if (!currentParam)
+    {
+        onExitCommand();
+        return true;
     }
 
     ofstream employeesFile("..\\Debug\\history.dat", ios_base::binary | ios_base::app);
@@ -428,15 +423,17 @@ bool changeLogo(map_t& settingsMap)
 {
     int currentParam;
     cout  << "Выберите логотип:\n\t1 - Гайка\n\t2 - Машина\n0 - Вернуться назад" << endl;
-    do
+    userInputHandler(currentParam);
+    if (!currentParam)
     {
-        userInputHandler<>(currentParam);
-        if (!currentParam)
-        {
-            onExitCommand();
-            return true;
-        }
-    } while (currentParam != 1 && currentParam != 2);
+        onExitCommand();
+        return true;
+    }
+    if (currentParam != 1 && currentParam != 2)
+    {
+        cout << "Ошибка ввода! Вы ввели неверный параметр." << endl;
+        return false;
+    }
     currentParam -= 1;
     settingsMap["logoNumber"] = currentParam;
     ofstream settingsFile("..\\Debug\\settings.txt");
@@ -463,21 +460,38 @@ void userInputHandler(T & arg)
         getline(cin, arg);
     }
     else
-    {  
-        cin >> arg;
+    {
+        cin >> arg; 
     }
 }
+
 
 void onExitCommand()
 {
     cout << "Завершнение команды" << endl;
 }
 
-bool clearScreen()
+bool startProgram(ProgramInfo & progInfo)
 {
-    system("cls");
-    drawLogo(progInfo.settingsMap);
-    cout << "Добро пожаловать! Введите команду. Чтобы открыть список команд введите 8" << endl;
+    std::system("cls");
+    progInfo.clear();
+    if (!getSettings(progInfo.settingsMap))
+    {
+        return false;
+    }
+    if (!getEmployees(progInfo.employeesList))
+    {
+        return false;
+    }
+    if (!getHistory(progInfo.historyList, progInfo.earnings))
+    {
+        return false;
+    }
+    if (!drawLogo(progInfo.settingsMap))
+    {
+        return false;
+    }
+    cout << "Добро пожаловать! Чтобы увидеть список команд введите 8" << endl;
     
     return true;
 }
