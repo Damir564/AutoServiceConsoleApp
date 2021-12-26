@@ -26,7 +26,8 @@ enum COMMANDS {
 
 struct ProgramInfo
 {
-    ProgramInfo() : earnings(0){}
+    ProgramInfo() : earnings(0)
+    { }
     ~ProgramInfo(){}
     void clear()
     {
@@ -495,16 +496,3 @@ bool startProgram(ProgramInfo & progInfo)
     
     return true;
 }
-
-/*
-* +Команда printHelp()
-* +Сделать возможность чтения сотрудников из employee.dat/bool getEmployees(string & arr[]). Формат: ФИО номер_телефона. 
-* +Вывод всех сотрудников на экран/void printEmployees(string & arr[]).
-* +Возможность добавлять сотрудников/ bool addEmployee(string & arr[]). Параметры - ФИО, номер.
-* +Возможность убирать сотрудников/ bool removeEmployee(string & arr[]). Параметры - ФИО, номер.
-* +Возможность чтения истории обслуживания клиентов. bool getHistory(string & arr[]). Формат: дд.мм.гг НОМЕРАВТО категория_обслуживания деньги.
-* Возможность вывода на экран. void printHistory(string & arr[]).
-* Возможность добавлять в историю обслуживания. bool addHistory(string & arr[]). Параметры - номеравто, категория, деньги.
-* Возможность смотреть прибыль за период int getIncome(int date1, int date2 = -1). if (date2 == -1)
-*/
-
