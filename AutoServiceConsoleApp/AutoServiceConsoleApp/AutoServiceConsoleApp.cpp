@@ -139,7 +139,7 @@ bool addEmployee(vectorPair_t& employeesList)
         return true;
     }
 
-    ofstream employeesFile("..\\Debug\\employees.dat", ios_base::binary | ios_base::app);
+    ofstream employeesFile("..\\data\\employees.dat", ios_base::binary | ios_base::app);
     if (!employeesFile.is_open())
     {
         cout << "Файл Сотрудников не найден" << endl;
@@ -205,7 +205,7 @@ bool removeEmployee(vectorPair_t& employeesList)
             employeesList.erase(employeesList.begin() + posMap[name]);
         }
     }
-    ofstream employeesFile("..\\Debug\\employees.dat", ios_base::binary);
+    ofstream employeesFile("..\\data\\employees.dat", ios_base::binary);
     if (!employeesFile.is_open())
     {
         cout << "Файл Сотрудников не найден" << endl;
@@ -226,7 +226,7 @@ bool getSettings(map_t& settingsMap)
 {
     string param;
     int value;
-    ifstream settingsFile("..\\Debug\\settings.txt");
+    ifstream settingsFile("..\\data\\settings.txt", ios_base::out);
     if (!settingsFile.is_open())
     {
         cout << "Файл Настроек не найден" << endl;
@@ -256,7 +256,7 @@ bool getEmployees(vectorPair_t& employeesList)
 {
     string name = "";
     long long number = 0;
-    ifstream employeesFile("..\\Debug\\employees.dat", ios_base::binary);
+    ifstream employeesFile("..\\data\\employees.dat", ios_base::binary);
     if (!employeesFile.is_open())
     {
         cout << "Файл Сотрудников не найден" << endl;
@@ -310,7 +310,7 @@ bool addHistory(vectorPair_t& historyList)
         return true;
     }
 
-    ofstream employeesFile("..\\Debug\\history.dat", ios_base::binary | ios_base::app);
+    ofstream employeesFile("..\\data\\history.dat", ios_base::binary | ios_base::app);
     if (!employeesFile.is_open())
     {
         cout << "Файл Истории не найден" << endl;
@@ -359,7 +359,7 @@ bool printEarnings(long long& earnings)
         cout << "Заработок составляет: ";
     else
         cout << "Убыток составляет: ";
-    cout << earnings << " рублей." << endl;
+    cout << earnings << endl;
     return true;
 }
 
@@ -369,7 +369,7 @@ bool getHistory(vectorPair_t& historyList, long long& earnings)
     string info = "";
     int separator;
     long long number = 0;
-    ifstream historyFile("..\\Debug\\history.dat", ios_base::binary);
+    ifstream historyFile("..\\data\\history.dat", ios_base::binary);
     if (!historyFile.is_open())
     {
         cout << "Файл Истории не найден" << endl;
@@ -405,7 +405,7 @@ bool getHistory(vectorPair_t& historyList, long long& earnings)
 
 bool drawLogo(map_t& settingsMap)
 {
-    const string PATHS[2] = { "..\\Debug\\logo.txt" , "..\\Debug\\logo2.txt" };
+    const string PATHS[2] = { "..\\data\\logo.txt" , "..\\data\\logo2.txt" };
     ifstream logoFile(PATHS[settingsMap["logoNumber"]]);
     if (!logoFile.is_open())
     {
@@ -436,7 +436,7 @@ bool changeLogo(map_t& settingsMap)
     }
     currentParam -= 1;
     settingsMap["logoNumber"] = currentParam;
-    ofstream settingsFile("..\\Debug\\settings.txt");
+    ofstream settingsFile("..\\data\\settings.txt");
     if (!settingsFile.is_open())
     {
         return false;

@@ -1,0 +1,3 @@
+anotherParam 2
+logoNumber 1
+someParam 3
