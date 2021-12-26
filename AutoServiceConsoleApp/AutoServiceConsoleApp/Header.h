@@ -11,7 +11,10 @@ bool printEmployees(vectorPair_t& employeesList);
 bool addEmployee(vectorPair_t& employeesList);
 bool removeEmployee(vectorPair_t& employeesList);
 
-bool getHistory();
+bool getHistory(vectorPair_t& historyList, long long& earnings);
+bool addHistory(vectorPair_t& employeesList);
+bool printHistory(vectorPair_t& historyList);
+bool printEarnings(long long& earnings);
 
 template <typename T>
 void userInputHandler(T & arg);
