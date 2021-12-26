@@ -52,7 +52,7 @@ int main()
     ProgramInfo progInfo;
     if (!startProgram(progInfo))
     { 
-        std::system("pause");
+        system("pause");
         return -1;
     }
 
@@ -62,7 +62,7 @@ int main()
     {
         if (!commandState)
         {
-            std::system("pause");
+            system("pause");
             return -1;
         }
         cout << "Введите Команду:" << endl;
@@ -104,7 +104,7 @@ int main()
         }
     } while (currentCommand != EXIT);
 
-    std::system("pause");
+    system("pause");
     return 0;
 }
 
@@ -120,7 +120,7 @@ bool printHelp()
     cout << "7.\tИзменить логотип программы" << endl;
     cout << "8.\tВывести список команд" << endl;
     cout << "9.\tПерезагрузить программу" << endl;
-    cout << "10.\tВыйти из программы" << endl;
+    cout << "0.\tВыйти из программы" << endl;
     return true;
 }
 
@@ -455,7 +455,7 @@ template <typename T>
 void userInputHandler(T & arg)
 {
     cout << "Ввод >> ";
-    if constexpr (is_same_v<T, string>) // ???
+    if constexpr (is_same_v<T, string>)
     { 
         cin.ignore();
         getline(cin, arg);
@@ -474,7 +474,7 @@ void onExitCommand()
 
 bool startProgram(ProgramInfo & progInfo)
 {
-    std::system("cls");
+    system("cls");
     progInfo.clear();
     if (!getSettings(progInfo.settingsMap))
     {
