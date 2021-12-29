@@ -44,7 +44,7 @@ struct ProgramInfo
 
 #include "Header.h"
 
-int main()
+int main(int argc, char* argv[])
 {
     setlocale(LC_ALL, "RU");
     SetConsoleCP(1251);
@@ -55,6 +55,10 @@ int main()
         system("pause");
         return -1;
     }
+    if (argc > 1)
+        arguments::username = argv[1];
+    else
+        arguments::username = "Ввод";
 
     int currentCommand = 0;
     bool commandState = true;
@@ -127,7 +131,8 @@ bool printHelp()
 bool addEmployee(vectorPair_t& employeesList)
 {
     int currentParam;
-    cout << "Для того, чтобы добавить новых сотрудникок, введите количество добавляемых сотрудников (0 - вернуться назад)" << endl;
+    cout << "Для того, чтобы добавить новых сотрудникок, " <<
+        "введите количество добавляемых сотрудников(0 - вернуться назад)" << endl;
     userInputHandler(currentParam);
     if (cin.fail())
     {
@@ -173,7 +178,8 @@ bool addEmployee(vectorPair_t& employeesList)
 bool removeEmployee(vectorPair_t& employeesList)
 {
     int currentParam;
-    cout << "Для того, чтобы удалить сотрудников из списка, введите количество удаляемых сотрудников (0 - вернуться назад)" << endl;
+    cout << "Для того, чтобы удалить сотрудников из списка, "<< 
+        "введите количество удаляемых сотрудников(0 - вернуться назад)" << endl;
     userInputHandler(currentParam);
     if (cin.fail())
     {
@@ -298,7 +304,8 @@ bool getEmployees(vectorPair_t& employeesList)
 bool addHistory(vectorPair_t& historyList)
 {
     int currentParam;
-    cout << "Для того, чтобы добавить запись в историю, введите количество новых записей (0 - вернуться назад)" << endl;
+    cout << "Для того, чтобы добавить запись в историю, "<< 
+        "введите количество новых записей(0 - вернуться назад)" << endl;
     userInputHandler(currentParam);
     if (cin.fail())
     {
@@ -350,13 +357,15 @@ bool printHistory(vectorPair_t& historyList)
     {
         cout << i->first << ". Деньги: " << i->second << endl;
     }
+    if (historyList.begin() == historyList.end())
+        cout << "Нет истории обслуживания" << endl;
 
     return true;
 }
 
 bool printEarnings(long long& earnings)
 {
-    if (earnings > 0)
+    if (earnings >= 0)
         cout << "Заработок составляет: ";
     else
         cout << "Убыток составляет: ";
@@ -423,7 +432,7 @@ bool drawLogo(map_t& settingsMap)
 bool changeLogo(map_t& settingsMap)
 {
     int currentParam;
-    cout  << "Выберите логотип:\n\t1 - Гайка\n\t2 - Машина\n0 - Вернуться назад" << endl;
+    cout  << "Выберите логотип:\n\t1 - Шестерёнка\n\t2 - Машина\n0 - Вернуться назад" << endl;
     userInputHandler(currentParam);
     if (!currentParam)
     {
@@ -454,7 +463,7 @@ bool changeLogo(map_t& settingsMap)
 template <typename T>
 void userInputHandler(T & arg)
 {
-    cout << "Ввод >> ";
+    cout << arguments::username << " >> ";
     if constexpr (is_same_v<T, string>)
     { 
         cin.ignore();

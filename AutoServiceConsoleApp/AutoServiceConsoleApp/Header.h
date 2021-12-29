@@ -18,3 +18,9 @@ bool printEarnings(long long& earnings);
 
 template <typename T>
 void userInputHandler(T & arg);
+
+namespace arguments
+{
+	string username;
+}
+
