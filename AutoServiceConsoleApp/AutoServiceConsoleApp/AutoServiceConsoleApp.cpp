@@ -171,7 +171,6 @@ bool addEmployee(vectorPair_t& employeesList)
         employeesFile.write(buffer.c_str(), sizeof(char) * buffer.size());
     }
     employeesFile.close();
-
     return true;
 }
 
